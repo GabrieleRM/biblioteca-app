@@ -27,7 +27,9 @@ export default function Dewey({ navigation }) {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Biblioteca Calicantus</Text>
         <Text style={styles.headerSubtitle}>Via Duilio, 3 Comiso -Rg</Text>
-        <Text style={styles.headerSubtitle}>www................org / Fb....................</Text>
+        <Text style={styles.headerSubtitle}>
+          www................org / Fb....................
+        </Text>
       </View>
 
       {/* Box "Cerca per... Classi di Dewey" */}
@@ -40,7 +42,7 @@ export default function Dewey({ navigation }) {
       <View style={styles.listaBox}>
         {CLASSI_DEWEY.map((item) => (
           <View key={item.codice} style={styles.riga}>
-            
+
             {/* Nome NON cliccabile */}
             <Text style={styles.nome}>{item.nome}</Text>
 
@@ -48,14 +50,15 @@ export default function Dewey({ navigation }) {
             <TouchableOpacity
               onPress={() =>
                 navigation.navigate("Detail", {
-                  codice: item.codice,
-                  nome: item.nome,
-                  tipo: "dewey"
+                  tipo: "dewey",
+                  valore: item.codice,   // ✅ fondamentale
+                  nome: item.nome
                 })
               }
             >
               <Text style={styles.codice}>{item.codice}</Text>
             </TouchableOpacity>
+
           </View>
         ))}
       </View>
@@ -132,3 +135,4 @@ const styles = StyleSheet.create({
     color: "#003366"
   },
 });
+
