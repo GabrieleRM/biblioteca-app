@@ -1,94 +1,150 @@
 import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
+import { useEffect, useState } from "react";
+import { getBooksByGenere, getBooksByDewey } from "../src/services/getBooks";
+
+// MAPPA GENERI → CLASSE DEWEY
+const GENERE_TO_DEWEY = {
+  "01-Arte e Fotografia": "700",
+  "02-Medicina": "610",
+  "03-Scienze": "500",
+  "04-Cinema-Tv-Spettacolo": "790",
+  "05-Musica": "780",
+  "06-Società-Politica-Comunicazione": "300",
+  "07-Economia-Management": "330",
+  "08-Diritto": "340",
+  "09-Guide turistiche-Viaggi": "910",
+  "10-Religioni (Orientali)": "290",
+  "11-Religioni (Islam)": "297",
+  "12-Storia delle religioni": "200",
+};
 
 export default function Detail({ route }) {
-  const { codice, nome, tipo } = route.params;
+  const { tipo, valore } = route.params;
+
+  const [books, setBooks] = useState([]);
+
+  // Carica libri filtrati da Firestore
+  useEffect(() => {
+    if (tipo === "genere") {
+      getBooksByGenere(valore).then(setBooks);
+    }
+    if (tipo === "dewey") {
+      getBooksByDewey(valore).then(setBooks);
+    }
+  }, []);
+
+  // Ottieni la classe Dewey dal genere
+  const deweyFromGenere =
+    tipo === "genere" ? GENERE_TO_DEWEY[valore] || "" : valore;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-
+      
       {/* INTESTAZIONE */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Biblioteca Calicantus</Text>
         <Text style={styles.headerSubtitle}>Via Duilio, 3 Comiso -Rg</Text>
         <Text style={styles.headerSubtitle}>
-          www................org / Fb....................
+          www...............org / Fb................
         </Text>
       </View>
 
       {/* BOX CLASSI / GENERI */}
       <View style={styles.infoBox}>
-        <View style={styles.riga}>
+        <View style={styles.row}>
           <Text style={styles.label}>Classi di Dewey</Text>
-          <Text style={styles.value}>{tipo === "dewey" ? codice : ""}</Text>
+          <Text style={styles.value}>{deweyFromGenere}</Text>
         </View>
 
-        <View style={styles.riga}>
+        <View style={styles.row}>
           <Text style={styles.label}>Generi</Text>
-          <Text style={styles.value}>{tipo === "genere" ? `${codice} ${nome}` : ""}</Text>
+          <Text style={styles.value}>{tipo === "genere" ? valore : ""}</Text>
         </View>
       </View>
 
-      {/* MINI CATALOGO (FINTI LIBRI PER ORA) */}
-      <View style={styles.catalogoBox}>
-        <ScrollView horizontal>
-          <Image
-            source={{ uri: "https://i.imgur.com/GG7E7bE.jpeg" }}
-            style={styles.cover}
-          />
-          <Image
-            source={{ uri: "https://i.imgur.com/GG7E7bE.jpeg" }}
-            style={styles.cover}
-          />
-        </ScrollView>
-      </View>
+      {/* LISTA LIBRI - SCORRIMENTO ORIZZONTALE */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.horizontalContainer}
+      >
+        {books.map((book) => (
+          <View key={book.id} style={styles.bookCardHorizontal}>
+            
+            {/* COPERTINA */}
+            <Image
+              source={{
+                uri:
+                  book.images?.[0] ||
+                  "https://via.placeholder.com/400x600?text=Nessuna+Immagine",
+              }}
+              style={styles.coverHorizontal}
+            />
 
-      {/* ZONA DESCRIZIONE (VUOTA PER ORA) */}
-      <View style={styles.descrizioneBox}>
-        <Text style={styles.descrizioneText}>
-          (Descrizione libro — la aggiungeremo più avanti)
-        </Text>
-      </View>
+            {/* DETTAGLI */}
+            <View style={styles.textZoneHorizontal}>
+              <Text style={styles.line}>{book.posizione}</Text>
+              <Text style={styles.line}>{book.titolo}</Text>
 
+              {book.altro1 ? (
+                <Text style={styles.line}>{book.altro1}</Text>
+              ) : null}
+
+              {book.autore_nome || book.autore_cognome ? (
+                <Text style={styles.line}>
+                  {book.autore_nome} {book.autore_cognome}
+                </Text>
+              ) : null}
+
+              {book.altro2 ? (
+                <Text style={styles.line}>{book.altro2}</Text>
+              ) : null}
+            </View>
+          </View>
+        ))}
+      </ScrollView>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  /* CONTAINER */
   container: {
     padding: 20,
     backgroundColor: "#fff",
   },
 
-  /* HEADER */
+  /* INTESTAZIONE */
   header: {
     backgroundColor: "#d9e6f7",
-    borderWidth: 1,
     borderColor: "#666",
+    borderWidth: 1,
     paddingVertical: 12,
     marginBottom: 20,
   },
   headerTitle: {
-    textAlign: "center",
-    fontSize: 22,
+    fontSize: 26,
+    fontStyle: "italic",
     fontWeight: "bold",
+    textAlign: "center",
   },
   headerSubtitle: {
     textAlign: "center",
-    fontSize: 13,
+    fontSize: 14,
   },
 
-  /* BOX INFO */
+  /* BOX CLASSI / GENERI */
   infoBox: {
     backgroundColor: "#f6c19c",
     borderWidth: 1,
     borderColor: "#666",
-    padding: 12,
+    padding: 10,
     marginBottom: 20,
   },
-  riga: {
+  row: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 6,
+    paddingVertical: 4,
   },
   label: {
     fontSize: 20,
@@ -98,31 +154,36 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
 
-  /* MINI CATALOGO */
-  catalogoBox: {
-    borderWidth: 1,
-    borderColor: "#666",
-    padding: 12,
-    backgroundColor: "#fafafa",
-    marginBottom: 20,
-  },
-  cover: {
-    width: 140,
-    height: 200,
-    marginRight: 10,
-    borderWidth: 1,
-    borderColor: "#444",
+  /* SCROLL ORIZZONTALE */
+  horizontalContainer: {
+    paddingVertical: 20,
   },
 
-  /* DESCRIZIONE LIBRO (VUOTA) */
-  descrizioneBox: {
+  bookCardHorizontal: {
+    width: 300,
     borderWidth: 1,
     borderColor: "#666",
-    padding: 12,
-    minHeight: 120,
+    marginRight: 20,
+    padding: 10,
+    backgroundColor: "#fff",
   },
-  descrizioneText: {
-    fontSize: 16,
-    color: "gray",
+
+  coverHorizontal: {
+    width: "100%",
+    height: undefined,
+    aspectRatio: 0.62,
+    borderWidth: 1,
+    borderColor: "#333",
+    marginBottom: 10,
+  },
+
+  textZoneHorizontal: {
+    paddingHorizontal: 5,
+  },
+
+  line: {
+    fontSize: 18,
+    marginBottom: 4,
   },
 });
+

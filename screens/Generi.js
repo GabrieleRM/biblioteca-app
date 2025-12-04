@@ -24,7 +24,7 @@ const GENERI_LISTA = [
 export default function Generi({ navigation }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      
+
       {/* Intestazione */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Biblioteca Calicantus</Text>
@@ -48,9 +48,9 @@ export default function Generi({ navigation }) {
             style={styles.riga}
             onPress={() =>
               navigation.navigate("Detail", {
-                codice: gen.codice,
+                tipo: "genere",
+                valore: `${gen.codice}-${gen.nome}`,  // 🔥 ADESSO UGUALE AL DB
                 nome: gen.nome,
-                tipo: "genere"
               })
             }
           >

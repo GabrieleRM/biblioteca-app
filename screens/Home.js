@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,9 +9,18 @@ import {
   Image
 } from "react-native";
 
+import { getBooks } from "../src/services/getBooks";
+
 export default function Home({ navigation }) {
   const slide = useRef(new Animated.Value(-260)).current; 
   const [open, setOpen] = useState(false);
+
+  const [books, setBooks] = useState([]);
+
+  // 🔥 Carica i libri dal database Firestore
+  useEffect(() => {
+    getBooks().then(setBooks);
+  }, []);
 
   const toggleMenu = () => {
     const willOpen = !open;
@@ -27,7 +36,7 @@ export default function Home({ navigation }) {
   return (
     <View style={styles.container}>
 
-      {/* BARRA SUPERIORE — HAMBURGER + TITOLO */}
+      {/* BARRA SUPERIORE */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={toggleMenu} style={styles.burgerInHeader}>
           <Text style={styles.burgerIcon}>☰</Text>
@@ -36,14 +45,14 @@ export default function Home({ navigation }) {
         <Text style={styles.topBarTitle}>Biblioteca Calicantus</Text>
       </View>
 
-      {/* INTESTAZIONE (SOLO SFONDO + TESTI INFORMATIVI) */}
+      {/* INTESTAZIONE */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Biblioteca Calicantus</Text>
         <Text style={styles.headerSubtitle}>Via Duilio, 3 Comiso -Rg</Text>
         <Text style={styles.headerSubtitle}>www.............org / Fb.............</Text>
       </View>
 
-      {/* BOX “Cerca per...” */}
+      {/* CERCA PER */}
       <View style={styles.searchBox}>
         <Text style={styles.searchTitle}>Cerca per ......</Text>
 
@@ -55,12 +64,31 @@ export default function Home({ navigation }) {
         </View>
       </View>
 
-      {/* CATALOGO SCORREVOLE */}
+      {/* 📚 CATALOGO DEI LIBRI (SCORREVOLE VERTICALE) */}
       <ScrollView style={styles.catalogo}>
-        <Image
-          source={require("../assets/libro1.jpg")}
-          style={styles.bookCover}
-        />
+        {books.map(book => (
+          <View key={book.id} style={{ marginBottom: 25 }}>
+
+            {/* COPERTINA DEL LIBRO */}
+            <Image
+              source={{
+                uri:
+                  book.images && book.images.length > 0
+                    ? book.images[0]
+                    : "https://via.placeholder.com/600x900.png?text=Nessuna+Immagine"
+              }}
+              style={styles.bookCover}
+            />
+
+            {/* TITOLO */}
+            <Text style={styles.bookTitle}>{book.titolo}</Text>
+
+            {/* AUTORE */}
+            <Text style={styles.bookSubtitle}>
+              {book.autore_nome} {book.autore_cognome}
+            </Text>
+          </View>
+        ))}
       </ScrollView>
 
       {/* MENU LATERALE */}
@@ -201,7 +229,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
-  /* CATALOGO */
+  /* 📚 CATALOGO REALE */
   catalogo: {
     marginTop: 20,
     marginHorizontal: 20,
@@ -212,5 +240,14 @@ const styles = StyleSheet.create({
     aspectRatio: 0.65,
     borderWidth: 1,
     borderColor: "#333",
+  },
+  bookTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginTop: 10,
+  },
+  bookSubtitle: {
+    fontSize: 14,
+    color: "#555",
   },
 });
