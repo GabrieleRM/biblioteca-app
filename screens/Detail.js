@@ -23,33 +23,25 @@ export default function Detail({ route }) {
 
   const [books, setBooks] = useState([]);
 
-  // Carica libri filtrati da Firestore
   useEffect(() => {
-    if (tipo === "genere") {
-      getBooksByGenere(valore).then(setBooks);
-    }
-    if (tipo === "dewey") {
-      getBooksByDewey(valore).then(setBooks);
-    }
+    if (tipo === "genere") getBooksByGenere(valore).then(setBooks);
+    if (tipo === "dewey") getBooksByDewey(valore).then(setBooks);
   }, []);
 
-  // Ottieni la classe Dewey dal genere
   const deweyFromGenere =
     tipo === "genere" ? GENERE_TO_DEWEY[valore] || "" : valore;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      
-      {/* INTESTAZIONE */}
+
+      {/* HEADER COME LA HOME */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Biblioteca Calicantus</Text>
         <Text style={styles.headerSubtitle}>Via Duilio, 3 Comiso -Rg</Text>
-        <Text style={styles.headerSubtitle}>
-          www...............org / Fb................
-        </Text>
+        <Text style={styles.headerSubtitle}>www...............org / Fb................</Text>
       </View>
 
-      {/* BOX CLASSI / GENERI */}
+      {/* BOX INFO COME LA HOME */}
       <View style={styles.infoBox}>
         <View style={styles.row}>
           <Text style={styles.label}>Classi di Dewey</Text>
@@ -57,48 +49,42 @@ export default function Detail({ route }) {
         </View>
 
         <View style={styles.row}>
-          <Text style={styles.label}>Generi</Text>
+          <Text style={styles.label}>Genere</Text>
           <Text style={styles.value}>{tipo === "genere" ? valore : ""}</Text>
         </View>
       </View>
 
-      {/* LISTA LIBRI - SCORRIMENTO ORIZZONTALE */}
+      {/* LIBRI ORIZZONTALI */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.horizontalContainer}
       >
         {books.map((book) => (
-          <View key={book.id} style={styles.bookCardHorizontal}>
-            
-            {/* COPERTINA */}
+          <View key={book.id} style={styles.bookCard}>
+
             <Image
               source={{
                 uri:
                   book.images?.[0] ||
                   "https://via.placeholder.com/400x600?text=Nessuna+Immagine",
               }}
-              style={styles.coverHorizontal}
+              style={styles.cover}
             />
 
-            {/* DETTAGLI */}
-            <View style={styles.textZoneHorizontal}>
+            <View style={styles.textZone}>
               <Text style={styles.line}>{book.posizione}</Text>
               <Text style={styles.line}>{book.titolo}</Text>
 
-              {book.altro1 ? (
-                <Text style={styles.line}>{book.altro1}</Text>
-              ) : null}
+              {book.altro1 ? <Text style={styles.line}>{book.altro1}</Text> : null}
 
-              {book.autore_nome || book.autore_cognome ? (
+              {(book.autore_nome || book.autore_cognome) && (
                 <Text style={styles.line}>
                   {book.autore_nome} {book.autore_cognome}
                 </Text>
-              ) : null}
+              )}
 
-              {book.altro2 ? (
-                <Text style={styles.line}>{book.altro2}</Text>
-              ) : null}
+              {book.altro2 ? <Text style={styles.line}>{book.altro2}</Text> : null}
             </View>
           </View>
         ))}
@@ -110,80 +96,91 @@ export default function Detail({ route }) {
 const styles = StyleSheet.create({
   /* CONTAINER */
   container: {
-    padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#F4EDE2",
+    paddingBottom: 40,
+    paddingTop: 10,
   },
 
-  /* INTESTAZIONE */
+  /* HEADER IDENTICO ALLA HOME */
   header: {
-    backgroundColor: "#d9e6f7",
-    borderColor: "#666",
+    backgroundColor: "#FBF7F0",
     borderWidth: 1,
-    paddingVertical: 12,
+    borderColor: "#E0D3C2",
+    paddingVertical: 14,
+    marginHorizontal: 20,
     marginBottom: 20,
+    borderRadius: 10,
   },
   headerTitle: {
     fontSize: 26,
-    fontStyle: "italic",
-    fontWeight: "bold",
+    fontWeight: "700",
     textAlign: "center",
+    color: "#2B1D1A",
   },
   headerSubtitle: {
     textAlign: "center",
     fontSize: 14,
+    color: "#4A3C31",
   },
 
-  /* BOX CLASSI / GENERI */
+  /* BOX INFO IDENTICO A HOME */
   infoBox: {
-    backgroundColor: "#f6c19c",
-    borderWidth: 1,
-    borderColor: "#666",
-    padding: 10,
+    backgroundColor: "#FBF7F0",
+    borderWidth: 0,
+    borderColor: "#C9A66B",
+    padding: 14,
+    borderRadius: 10,
+    marginHorizontal: 20,
     marginBottom: 20,
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingVertical: 4,
+    paddingVertical: 6,
   },
   label: {
     fontSize: 20,
     fontWeight: "bold",
+    color: "#2B1D1A",
   },
   value: {
     fontSize: 20,
+    color: "#4A3C31",
   },
 
-  /* SCROLL ORIZZONTALE */
+  /* LIBRI - STILE CARD IDENTICO ALLA HOME */
   horizontalContainer: {
-    paddingVertical: 20,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingBottom: 30,
   },
 
-  bookCardHorizontal: {
-    width: 300,
+  bookCard: {
+    width: 260,
+    backgroundColor: "#FBF7F0",
     borderWidth: 1,
-    borderColor: "#666",
+    borderColor: "#E0D3C2",
+    borderRadius: 12,
     marginRight: 20,
-    padding: 10,
-    backgroundColor: "#fff",
+    padding: 12,
   },
 
-  coverHorizontal: {
+  cover: {
     width: "100%",
-    height: undefined,
     aspectRatio: 0.62,
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#333",
-    marginBottom: 10,
+    borderColor: "#E0D3C2",
+    marginBottom: 12,
   },
 
-  textZoneHorizontal: {
-    paddingHorizontal: 5,
+  textZone: {
+    paddingHorizontal: 4,
   },
 
   line: {
     fontSize: 18,
-    marginBottom: 4,
+    marginBottom: 6,
+    color: "#2B1D1A",
   },
 });
-

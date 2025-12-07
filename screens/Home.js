@@ -6,18 +6,17 @@ import {
   TouchableOpacity,
   Animated,
   ScrollView,
-  Image
+  Image,
 } from "react-native";
 
 import { getBooks } from "../src/services/getBooks";
 
 export default function Home({ navigation }) {
-  const slide = useRef(new Animated.Value(-260)).current; 
+  const slide = useRef(new Animated.Value(-300)).current; // menu completamente fuori
   const [open, setOpen] = useState(false);
 
   const [books, setBooks] = useState([]);
 
-  // 🔥 Carica i libri dal database Firestore
   useEffect(() => {
     getBooks().then(setBooks);
   }, []);
@@ -27,16 +26,15 @@ export default function Home({ navigation }) {
     setOpen(willOpen);
 
     Animated.timing(slide, {
-      toValue: willOpen ? 0 : -260,
-      duration: 250,
+      toValue: willOpen ? 0 : -300, // stessa ampiezza della sidebar
+      duration: 260,
       useNativeDriver: true,
     }).start();
   };
 
   return (
     <View style={styles.container}>
-
-      {/* BARRA SUPERIORE */}
+      {/* TOP BAR */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={toggleMenu} style={styles.burgerInHeader}>
           <Text style={styles.burgerIcon}>☰</Text>
@@ -45,45 +43,47 @@ export default function Home({ navigation }) {
         <Text style={styles.topBarTitle}>Biblioteca Calicantus</Text>
       </View>
 
-      {/* INTESTAZIONE */}
+      {/* HEADER (CARTA CON BORDO) */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Biblioteca Calicantus</Text>
         <Text style={styles.headerSubtitle}>Via Duilio, 3 Comiso -Rg</Text>
-        <Text style={styles.headerSubtitle}>www.............org / Fb.............</Text>
+        <Text style={styles.headerSubtitle}>
+          www.............org / Fb.............
+        </Text>
       </View>
 
-      {/* CERCA PER */}
+      {/* BOX “CERCA PER…” */}
       <View style={styles.searchBox}>
         <Text style={styles.searchTitle}>Cerca per ......</Text>
 
         <View style={styles.grid}>
-          <HomeButton label="Classi di Dewey" onPress={() => navigation.navigate("Dewey")} />
-          <HomeButton label="Generi" onPress={() => navigation.navigate("Generi")} />
+          <HomeButton
+            label="Classi di Dewey"
+            onPress={() => navigation.navigate("Dewey")}
+          />
+          <HomeButton
+            label="Generi"
+            onPress={() => navigation.navigate("Generi")}
+          />
           <HomeButton label="Autori" onPress={() => alert("In arrivo")} />
           <HomeButton label="Titoli" onPress={() => alert("In arrivo")} />
         </View>
       </View>
 
-      {/* 📚 CATALOGO DEI LIBRI (SCORREVOLE VERTICALE) */}
+      {/* CATALOGO LIBRI (VERTICALE) */}
       <ScrollView style={styles.catalogo}>
-        {books.map(book => (
+        {books.map((book) => (
           <View key={book.id} style={{ marginBottom: 25 }}>
-
-            {/* COPERTINA DEL LIBRO */}
             <Image
               source={{
                 uri:
-                  book.images && book.images.length > 0
-                    ? book.images[0]
-                    : "https://via.placeholder.com/600x900.png?text=Nessuna+Immagine"
+                  book.images?.[0] ||
+                  "https://via.placeholder.com/600x900.png?text=Nessuna+Immagine",
               }}
               style={styles.bookCover}
             />
 
-            {/* TITOLO */}
             <Text style={styles.bookTitle}>{book.titolo}</Text>
-
-            {/* AUTORE */}
             <Text style={styles.bookSubtitle}>
               {book.autore_nome} {book.autore_cognome}
             </Text>
@@ -92,27 +92,43 @@ export default function Home({ navigation }) {
       </ScrollView>
 
       {/* MENU LATERALE */}
-      <Animated.View style={[styles.sidebar, { transform: [{ translateX: slide }] }]}>
+      <Animated.View
+        style={[styles.sidebar, { transform: [{ translateX: slide }] }]}
+      >
         <ScrollView>
-
-          {/* TASTO CHIUDI */}
           <TouchableOpacity onPress={toggleMenu} style={styles.closeBtn}>
             <Text style={styles.closeText}>✕ Chiudi</Text>
           </TouchableOpacity>
 
           <Text style={styles.menuTitle}>Menu</Text>
 
-          <MenuItem label="Cerca per Classi Dewey" onPress={() => navigation.navigate("Dewey")} />
-          <MenuItem label="Cerca per Generi" onPress={() => navigation.navigate("Generi")} />
-          <MenuItem label="Cerca per Autore" onPress={() => alert("In arrivo")} />
-          <MenuItem label="Cerca per Titolo" onPress={() => alert("In arrivo")} />
-          <MenuItem label="Mostra foto" onPress={() => alert("In arrivo")} />
-          <MenuItem label="Norme Prestito" onPress={() => alert("In arrivo")} />
+          <MenuItem
+            label="Cerca per Classi Dewey"
+            onPress={() => navigation.navigate("Dewey")}
+          />
+          <MenuItem
+            label="Cerca per Generi"
+            onPress={() => navigation.navigate("Generi")}
+          />
+          <MenuItem
+            label="Cerca per Autore"
+            onPress={() => alert("In arrivo")}
+          />
+          <MenuItem
+            label="Cerca per Titolo"
+            onPress={() => alert("In arrivo")}
+          />
+          <MenuItem
+            label="Mostra foto"
+            onPress={() => alert("In arrivo")}
+          />
+          <MenuItem
+            label="Norme Prestito"
+            onPress={() => alert("In arrivo")}
+          />
           <MenuItem label="Contatti" onPress={() => alert("In arrivo")} />
-
         </ScrollView>
       </Animated.View>
-
     </View>
   );
 }
@@ -134,79 +150,64 @@ function MenuItem({ label, onPress }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
+  container: { flex: 1, backgroundColor: "#F4EDE2" },
 
   /* TOP BAR */
   topBar: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: 12,
+    backgroundColor: "#FBF7F0",
   },
   burgerInHeader: { marginRight: 15 },
-  burgerIcon: { fontSize: 32 },
+  burgerIcon: { fontSize: 32, color: "#2B1D1A" },
   topBarTitle: {
     fontSize: 22,
     fontWeight: "bold",
+    color: "#2B1D1A",
   },
 
-  /* MENU LATERALE */
-  sidebar: {
-    position: "absolute",
-    top: 0,
-    bottom: 0,
-    left: 0,
-    width: 260,
-    backgroundColor: "#f7e7ba",
-    borderRightWidth: 1,
-    borderColor: "#c9ac66",
-    paddingTop: 80,
-    paddingHorizontal: 15,
-    zIndex: 999,
-  },
-  closeBtn: {
-    marginBottom: 15,
-    alignItems: "flex-end", 
-  },
-  closeText: { fontSize: 20, fontWeight: "bold" },
-  menuTitle: { fontSize: 22, fontWeight: "bold", marginBottom: 20 },
-  menuItem: { paddingVertical: 10 },
-  menuText: { fontSize: 18 },
-
-  /* HEADER */
+  /* HEADER CARD — con bordo sottile e margine dall’alto */
   header: {
-    backgroundColor: "#d9e6f7",
+    backgroundColor: "#FBF7F0",
     borderWidth: 1,
-    borderColor: "#666",
-    paddingVertical: 12,
+    borderColor: "#E0D3C2",
+    paddingVertical: 18,
     marginHorizontal: 20,
+    marginTop: 15, // 👈 distacco dalla top bar
     marginBottom: 20,
+    borderRadius: 12,
   },
   headerTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
+    fontSize: 24,
+    fontWeight: "700",
     textAlign: "center",
+    color: "#2B1D1A",
   },
   headerSubtitle: {
     textAlign: "center",
-    fontSize: 13,
+    fontSize: 14,
+    color: "#4A3C31",
   },
 
-  /* CERCA PER */
+  /* BOX CERCA PER — con bordo e pulsanti centrali come prima */
   searchBox: {
-    backgroundColor: "#f6c19c",
-    borderWidth: 1,
-    borderColor: "#666",
+    backgroundColor: "#FBF7F0",
+    borderWidth: 0,
+    borderColor: "#C9A66B",
     marginHorizontal: 20,
-    paddingVertical: 15,
+    paddingVertical: 20,
+    borderRadius: 12,
+    marginBottom: 20,
   },
   searchTitle: {
     fontSize: 22,
     fontWeight: "bold",
     textAlign: "center",
-    marginBottom: 15,
+    marginBottom: 20,
+    color: "#2B1D1A",
   },
-
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -215,39 +216,79 @@ const styles = StyleSheet.create({
   },
 
   homeButton: {
-    backgroundColor: "#e6a97a",
+    backgroundColor: "#F4EDE2",
     paddingVertical: 12,
     width: "48%",
     marginBottom: 12,
     borderRadius: 10,
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#a86b42",
+    borderWidth: 0.5,          // 👈 bordo ripristinato
+    borderColor: "#C9A66B",  // 👈 colore caldo
   },
   homeButtonText: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: "600",
+    color: "#4A3C31",
   },
 
-  /* 📚 CATALOGO REALE */
+  /* CATALOGO LIBRI */
   catalogo: {
-    marginTop: 20,
+    marginTop: 10,
     marginHorizontal: 20,
   },
   bookCover: {
     width: "100%",
     height: undefined,
     aspectRatio: 0.65,
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#333",
+    borderColor: "#C9A66B",
   },
   bookTitle: {
     fontSize: 18,
     fontWeight: "bold",
     marginTop: 10,
+    color: "#2B1D1A",
   },
   bookSubtitle: {
     fontSize: 14,
-    color: "#555",
+    color: "#6A5E55",
+  },
+
+  /* SIDEBAR — migliorata ma senza “striscia” quando è chiusa */
+  sidebar: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    width: 300,
+    backgroundColor: "#FBF7F0",
+    paddingTop: 60,
+    paddingHorizontal: 20,
+    elevation: 6,
+  },
+  closeBtn: {
+    marginBottom: 20,
+    alignItems: "flex-end",
+  },
+  closeText: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#A67C52",
+  },
+  menuTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginBottom: 20,
+    color: "#2B1D1A",
+  },
+  menuItem: {
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderColor: "#E3D7C3",
+  },
+  menuText: {
+    fontSize: 18,
+    color: "#4A3C31",
   },
 });

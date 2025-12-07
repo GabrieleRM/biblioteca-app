@@ -23,35 +23,35 @@ export default function Dewey({ navigation }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
 
-      {/* Intestazione */}
+      {/* ░░ INTESTAZIONE ░░ */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Biblioteca Calicantus</Text>
         <Text style={styles.headerSubtitle}>Via Duilio, 3 Comiso -Rg</Text>
         <Text style={styles.headerSubtitle}>
-          www................org / Fb....................
+          www.................org / Fb...................
         </Text>
       </View>
 
-      {/* Box "Cerca per... Classi di Dewey" */}
+      {/* ░░ BOX CERCA PER ░░ */}
       <View style={styles.titleBox}>
         <Text style={styles.cercaPer}>Cerca per ......</Text>
         <Text style={styles.classeTitle}>Classi di Dewey</Text>
       </View>
 
-      {/* Lista Classi */}
+      {/* ░░ LISTA DEWEY ░░ */}
       <View style={styles.listaBox}>
         {CLASSI_DEWEY.map((item) => (
           <View key={item.codice} style={styles.riga}>
 
-            {/* Nome NON cliccabile */}
+            {/* Nome classe (sinistra) */}
             <Text style={styles.nome}>{item.nome}</Text>
 
-            {/* SOLO numero cliccabile */}
+            {/* Codice cliccabile (destra) */}
             <TouchableOpacity
               onPress={() =>
                 navigation.navigate("Detail", {
                   tipo: "dewey",
-                  valore: item.codice,   // ✅ fondamentale
+                  valore: item.codice,
                   nome: item.nome
                 })
               }
@@ -70,69 +70,82 @@ export default function Dewey({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#F4EDE1", // pergamena
   },
 
+  /* ░░ HEADER ░░ */
   header: {
-    backgroundColor: "#d9e6f7",
+    backgroundColor: "#FBF7F0",
     borderWidth: 1,
-    borderColor: "#666",
-    paddingVertical: 12,
+    borderColor: "#E0D3C2",
+    paddingVertical: 16,
+    marginHorizontal: 5,
+    marginTop: 20,
     marginBottom: 20,
+    borderRadius: 14,
   },
   headerTitle: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
-    marginBottom: 4,
+    color: "#2B1D1A",
   },
   headerSubtitle: {
     textAlign: "center",
-    fontSize: 13,
+    fontSize: 14,
+    color: "#4A3C31",
   },
 
+  /* ░░ CERCA PER ░░ */
   titleBox: {
-    backgroundColor: "#f6c19c",
-    borderWidth: 1,
-    borderColor: "#666",
-    paddingVertical: 12,
-    marginBottom: 12,
+    backgroundColor: "#FBF7F0",
+    borderWidth: 0,
+    borderColor: "#E0D3C2",
+    paddingVertical: 20,
+    borderRadius: 14,
+    marginBottom: 20,
   },
   cercaPer: {
     fontSize: 18,
     fontStyle: "italic",
     textAlign: "center",
+    color: "#4A3C31",
   },
   classeTitle: {
     textAlign: "center",
     fontSize: 22,
     fontWeight: "bold",
     marginTop: 4,
+    color: "#2B1D1A",
   },
 
+  /* ░░ LISTA DEWEY ░░ */
   listaBox: {
-    backgroundColor: "#f6c19c",
-    borderWidth: 1,
-    borderColor: "#666",
+    backgroundColor: "#FBF7F0",
+    borderWidth: 0,
+    borderColor: "#E0D3C2",
     padding: 16,
+    borderRadius: 14,
   },
 
   riga: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-    paddingVertical: 8,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#EDE2D3",
   },
 
   nome: {
-    fontSize: 20,
+    fontSize: 18,
+    color: "#2B1D1A",
+    flex: 1,
   },
 
   codice: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#003366"
+    color: "#4A3F2B",
   },
 });
 

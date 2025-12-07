@@ -25,22 +25,20 @@ export default function Generi({ navigation }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
 
-      {/* Intestazione */}
+      {/* INTESTAZIONE */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Biblioteca Calicantus</Text>
         <Text style={styles.headerSubtitle}>Via Duilio, 3 Comiso -Rg</Text>
-        <Text style={styles.headerSubtitle}>
-          www................org / Fb....................
-        </Text>
+        <Text style={styles.headerSubtitle}>www.................org / Fb.................</Text>
       </View>
 
-      {/* Box "Cerca per... Generi" */}
+      {/* TITOLO */}
       <View style={styles.titleBox}>
         <Text style={styles.cercaPer}>Cerca per ......</Text>
         <Text style={styles.classeTitle}>Generi</Text>
       </View>
 
-      {/* Lista Generi */}
+      {/* LISTA GENERI */}
       <View style={styles.listaBox}>
         {GENERI_LISTA.map((gen) => (
           <TouchableOpacity
@@ -49,13 +47,13 @@ export default function Generi({ navigation }) {
             onPress={() =>
               navigation.navigate("Detail", {
                 tipo: "genere",
-                valore: `${gen.codice}-${gen.nome}`,  // 🔥 ADESSO UGUALE AL DB
+                valore: `${gen.codice}-${gen.nome}`,
                 nome: gen.nome,
               })
             }
           >
             <Text style={styles.genereText}>
-              {gen.codice}-{gen.nome}
+              {gen.codice} — {gen.nome}
             </Text>
           </TouchableOpacity>
         ))}
@@ -67,58 +65,74 @@ export default function Generi({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: "#F4EDE2", // pergamena
     padding: 20,
-    backgroundColor: "#fff",
+    paddingBottom: 40,
   },
 
+  /* INTESTAZIONE */
   header: {
-    backgroundColor: "#d9e6f7",
+    backgroundColor: "#FBF7F0",
     borderWidth: 1,
-    borderColor: "#666",
-    paddingVertical: 12,
+    borderColor: "#E0D3C2",
+    paddingVertical: 14,
     marginBottom: 20,
+    borderRadius: 8,
   },
   headerTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
+    fontSize: 24,
+    fontWeight: "700",
     textAlign: "center",
+    color: "#2B1D1A",
   },
   headerSubtitle: {
     textAlign: "center",
-    fontSize: 13,
+    fontSize: 14,
+    color: "#4A3C31",
   },
 
+  /* TITOLO */
   titleBox: {
-    backgroundColor: "#f6c19c",
-    borderWidth: 1,
-    borderColor: "#666",
-    paddingVertical: 12,
-    marginBottom: 12,
+    backgroundColor: "#FBF7F0",
+    borderWidth: 0,
+    borderColor: "#C9A66B",
+    paddingVertical: 16,
+    marginBottom: 16,
+    borderRadius: 10,
   },
   cercaPer: {
     fontSize: 18,
     fontStyle: "italic",
     textAlign: "center",
+    color: "#4A3C31",
   },
   classeTitle: {
     textAlign: "center",
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "bold",
-    marginTop: 4,
+    marginTop: 6,
+    color: "#2B1D1A",
   },
 
+  /* LISTA GENERI */
   listaBox: {
-    backgroundColor: "#f6c19c",
-    borderWidth: 1,
-    borderColor: "#666",
-    padding: 16,
+    backgroundColor: "#FBF7F0",
+    borderWidth: 0,
+    borderColor: "#C9A66B",
+    borderRadius: 10,
+    padding: 12,
   },
 
   riga: {
-    paddingVertical: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderColor: "#E3D7C3",
   },
 
   genereText: {
     fontSize: 20,
+    color: "#2B1D1A",
+    fontWeight: "500",
   },
 });
